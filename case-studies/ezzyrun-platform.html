@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Multi-Gateway Logistics Platform | Case Study</title>
+  <meta name="description" content="Backend architecture case study: a registry-pattern logistics and payments platform serving domestic and cross-border e-commerce orders.">
+
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+
+  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="../assets/css/main.css" rel="stylesheet">
+
+  <style>
+    .case-hero {
+      background-color: var(--background-color, #f4fafd);
+      padding: 60px 0 20px;
+      border-bottom: 1px solid #e6e9ec;
+    }
+    .case-hero .back-link {
+      font-family: var(--nav-font);
+      font-size: 14px;
+      color: var(--accent-color);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 24px;
+    }
+    .case-hero .back-link:hover { text-decoration: underline; }
+    .case-hero h1 {
+      font-family: var(--heading-font);
+      font-weight: 700;
+      font-size: 34px;
+      color: var(--heading-color);
+      margin-bottom: 10px;
+    }
+    .case-hero .tagline {
+      font-size: 17px;
+      color: #55595e;
+      max-width: 700px;
+      margin-bottom: 24px;
+    }
+    .case-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .case-meta span {
+      font-family: var(--nav-font);
+      font-size: 12px;
+      letter-spacing: 0.3px;
+      background: #ffffff;
+      border: 1px solid #dfe4e8;
+      color: #495057;
+      padding: 5px 12px;
+      border-radius: 20px;
+    }
+    .private-note {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      background: #fff8e6;
+      border: 1px solid #f0e0ad;
+      color: #6b5a1e;
+      font-size: 14px;
+      padding: 14px 16px;
+      border-radius: 8px;
+      margin: 28px 0 0;
+    }
+    .private-note i { font-size: 16px; margin-top: 2px; }
+
+    .case-section { padding: 50px 0; }
+    .case-section + .case-section { border-top: 1px solid #eef1f3; }
+    .case-section h2 {
+      font-family: var(--heading-font);
+      font-weight: 600;
+      font-size: 22px;
+      color: var(--heading-color);
+      margin-bottom: 6px;
+    }
+    .case-section .section-kicker {
+      font-family: var(--nav-font);
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--accent-color);
+      margin-bottom: 8px;
+      display: block;
+    }
+    .case-section p { color: #4b4f54; line-height: 1.75; }
+
+    .diagram-card {
+      background: #ffffff;
+      border: 1px solid #e6e9ec;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 24px 0 22px;
+    }
+    .diagram-card img { width: 100%; height: auto; display: block; }
+
+    .decision-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 22px;
+    }
+    @media (max-width: 900px) { .decision-grid { grid-template-columns: 1fr; } }
+    .decision-card {
+      border-left: 3px solid var(--accent-color);
+      background: #f8fafb;
+      padding: 14px 16px;
+      border-radius: 0 8px 8px 0;
+    }
+    .decision-card .label {
+      font-family: var(--nav-font);
+      font-size: 11px;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      color: var(--accent-color);
+      display: block;
+      margin-bottom: 6px;
+    }
+    .decision-card p { font-size: 14px; margin: 0; color: #3d4046; line-height: 1.6; }
+
+    .stack-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .stack-list span {
+      font-size: 13px;
+      background: #eef6fc;
+      color: #0c7cb0;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-family: var(--nav-font);
+    }
+
+    .case-footer {
+      padding: 40px 0 70px;
+      text-align: center;
+    }
+    .case-footer a.btn-back {
+      display: inline-block;
+      background: var(--accent-color);
+      color: #fff;
+      padding: 12px 28px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-family: var(--nav-font);
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body class="case-study-page">
+
+  <section class="case-hero">
+    <div class="container">
+      <a href="../index.html#portfolio" class="back-link"><i class="bi bi-arrow-left"></i> Back to portfolio</a>
+      <h1>Multi-gateway logistics &amp; payments platform</h1>
+      <p class="tagline">Backend systems work on a NestJS/MongoDB e-commerce and logistics platform serving domestic orders in one market and cross-border express orders into another &mdash; with a registry-pattern integration layer for six payment gateways and multiple logistics providers.</p>
+      <div class="case-meta">
+        <span>Backend / systems design</span>
+        <span>NestJS</span>
+        <span>MongoDB</span>
+        <span>Payments infrastructure</span>
+        <span>Logistics integrations</span>
+      </div>
+      <div class="private-note">
+        <i class="bi bi-lock"></i>
+        <div>The production codebase is private (client work). This case study covers architecture, design decisions, and problem-solving &mdash; described generically, without proprietary business logic, credentials, or company-identifying details.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="case-section">
+    <div class="container">
+      <span class="section-kicker">Overview</span>
+      <h2>What the platform does</h2>
+      <p>
+        The system connects products, currencies, logistics providers, and payment gateways through a network of regional "hubs." Orders are routed as either domestic or cross-border express based on the destination hub's location, and each path resolves independently to a set of pluggable providers rather than hardcoded integrations. My work centered on the backend: order orchestration, the payment and logistics integration layers, and the async workers (webhooks and cron jobs) that keep everything consistent under real-world failure conditions &mdash; retried webhooks, abandoned checkouts, and provider outages.
+      </p>
+      <div class="stack-list">
+        <span>NestJS</span><span>MongoDB / Mongoose</span><span>Payment gateway registry (6 providers)</span>
+        <span>Logistics provider registry</span><span>Cron-based reconciliation</span><span>Webhook idempotency</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="case-section">
+    <div class="container">
+      <span class="section-kicker">System design</span>
+      <h2>Architecture overview</h2>
+      <p>Client requests flow through an order orchestration layer that branches by order kind, resolves to a regional hub, and fans out to two independently pluggable registries &mdash; one for logistics providers, one for payment gateways &mdash; before settling asynchronously through webhooks and scheduled jobs.</p>
+      <div class="diagram-card">
+        <img src="assets/architecture-overview.svg" alt="Diagram of the platform architecture: client apps to order orchestration, routed through a hub to logistics and payment gateway registries, settling via webhooks and cron jobs." loading="lazy">
+      </div>
+      <div class="decision-grid">
+        <div class="decision-card">
+          <span class="label">Problem</span>
+          <p>New payment and logistics providers were being added regularly, and hardcoding each one against the order flow made every addition riskier than the last.</p>
+        </div>
+        <div class="decision-card">
+          <span class="label">Decision</span>
+          <p>Both payments and logistics sit behind a shared interface (a "registry" pattern), so a new provider is an implementation, not a rewrite of the order flow.</p>
+        </div>
+        <div class="decision-card">
+          <span class="label">Trade-off</span>
+          <p>Providers that don't cleanly fit the shared interface (a cross-border courier with a different shipment model) are kept deliberately outside the registry rather than forced into a leaky abstraction.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="case-section">
+    <div class="container">
+      <span class="section-kicker">Problem solved</span>
+      <h2>Voucher reservation lifecycle</h2>
+      <p>Vouchers were originally redeemed synchronously at order creation, before payment was confirmed &mdash; meaning an abandoned or failed checkout still burned the discount. I redesigned it as a reserve-then-confirm-or-release lifecycle, with a scheduled job to reclaim anything left stuck in a pending state.</p>
+      <div class="diagram-card">
+        <img src="assets/voucher-lifecycle.svg" alt="Diagram of the voucher reservation lifecycle: order creation reserves a voucher as pending, a payment webhook confirms or releases it, and an hourly cron releases reservations that expired unconfirmed." loading="lazy">
+      </div>
+      <div class="decision-grid">
+        <div class="decision-card">
+          <span class="label">Problem</span>
+          <p>A voucher was marked fully redeemed the moment an order was created &mdash; before payment ever confirmed &mdash; so failed or abandoned checkouts still consumed it.</p>
+        </div>
+        <div class="decision-card">
+          <span class="label">Decision</span>
+          <p>Introduced a reservation state machine: reserve on order creation, confirm on successful payment webhook, release on failure &mdash; plus an hourly cron releasing anything abandoned past a 24-hour window.</p>
+        </div>
+        <div class="decision-card">
+          <span class="label">Trade-off</span>
+          <p>Adds a cleanup job and an extra state to reason about, in exchange for vouchers never being lost to checkouts that were never completed.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="case-section">
+    <div class="container">
+      <span class="section-kicker">Problem solved</span>
+      <h2>Webhook idempotency</h2>
+      <p>Payment providers retry webhook delivery, and a naive read-then-write handler can process the same successful payment twice. The fix is a single atomic database operation rather than a read followed by a write.</p>
+      <div class="diagram-card">
+        <img src="assets/webhook-idempotency.svg" alt="Diagram of the webhook idempotency pattern: a webhook triggers a single atomic conditional update filtered on pending status, which either fulfills the order once or is skipped as a duplicate delivery." loading="lazy">
+      </div>
+      <div class="decision-grid">
+        <div class="decision-card">
+          <span class="label">Problem</span>
+          <p>A read-then-write webhook handler has a race window &mdash; two retried deliveries can both read "not yet processed" and both act.</p>
+        </div>
+        <div class="decision-card">
+          <span class="label">Decision</span>
+          <p>Replaced the read-then-write with one atomic conditional update (find a record with status pending, set it to confirmed) &mdash; the database itself guarantees only one caller wins.</p>
+        </div>
+        <div class="decision-card">
+          <span class="label">Trade-off</span>
+          <p>Requires modeling every webhook-driven transition as a conditional state change up front, rather than free-form logic in the handler &mdash; more structure, but it's what makes the guarantee hold.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="case-footer">
+    <div class="container">
+      <a class="btn-back" href="../index.html#portfolio">Back to portfolio</a>
+    </div>
+  </section>
+
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
